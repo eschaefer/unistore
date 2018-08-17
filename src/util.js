@@ -28,12 +28,23 @@ export function assign(obj, props) {
 	return obj;
 }
 
-export function applyMiddleware(middleware) {
+// Borrowed from https://github.com/reduxjs/redux/blob/master/src/compose.js
+export function compose(...funcs) {
+	if (funcs.length === 0) return arg => arg;
+	if (funcs.length === 1) return funcs[0];
+
+	return funcs.reduce((a, b) => (...args) => a(b(...args)));
+}
+
+/* Borrowed from https://github.com/reduxjs/redux/blob/master/src/applyMiddleware.js
+   Allows for composable middlewares.
+*/
+function applyMiddleware(...middlewares) {
 	return createStore => (...args) => {
 		const store = createStore(...args);
 		let action = () => {
 			throw new Error(
-				`Executing an action while constructing your middleware is not allowed. ` +
+				`Actions while constructing your middleware are not allowed. ` +
 				`Other middleware would not be applied to this action.`
 			);
 		};
@@ -42,7 +53,8 @@ export function applyMiddleware(middleware) {
 			getState: store.getState,
 			action: (...args) => action(...args)
 		};
-		action = middleware(middlewareAPI)(store.action); // use compose on chain
+		const chain = middlewares.map(middleware => middleware(middlewareAPI));
+		action = compose(...chain)(store.action);
 
 		return {
 			...store,

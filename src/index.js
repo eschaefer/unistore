@@ -12,7 +12,7 @@ import { assign, applyMiddleware } from './util';
  * store.setState({ c: 'd' });   // logs { a: 'b', c: 'd' }
  */
 export default function createStore(state, enhancer) {
-	if (typeof enhancer !== 'undefined') {
+	if (typeof enhancer==='function') {
 		return enhancer(createStore)(state);
 	}
 
