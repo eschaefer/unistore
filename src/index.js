@@ -1,4 +1,4 @@
-import { assign } from './util';
+import { assign, applyMiddleware } from './util';
 
 /**
  * Creates a new store, which is a tiny evented state container.
@@ -11,7 +11,11 @@ import { assign } from './util';
  * store.setState({ a: 'b' });   // logs { a: 'b' }
  * store.setState({ c: 'd' });   // logs { a: 'b', c: 'd' }
  */
-export default function createStore(state) {
+export default function createStore(state, enhancer) {
+	if (typeof enhancer !== 'undefined') {
+		return enhancer(createStore)(state);
+	}
+
 	let listeners = [];
 	state = state || {};
 
@@ -60,6 +64,7 @@ export default function createStore(state) {
 				let ret = action.apply(this, args);
 				if (ret!=null) {
 					if (ret.then) return ret.then(apply);
+					if (typeof ret==='function') return ret(apply);
 					return apply(ret);
 				}
 			};
@@ -98,3 +103,5 @@ export default function createStore(state) {
 		}
 	};
 }
+
+export { applyMiddleware };
