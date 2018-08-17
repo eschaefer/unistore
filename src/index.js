@@ -1,4 +1,4 @@
-import { assign, applyMiddleware } from './util';
+import { assign, applyMiddleware, compose } from './util';
 
 /**
  * Creates a new store, which is a tiny evented state container.
@@ -104,4 +104,4 @@ export default function createStore(state, enhancer) {
 	};
 }
 
-export { applyMiddleware };
+export { applyMiddleware, compose };

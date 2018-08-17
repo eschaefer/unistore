@@ -39,7 +39,7 @@ export function compose(...funcs) {
 /* Borrowed from https://github.com/reduxjs/redux/blob/master/src/applyMiddleware.js
    Allows for composable middlewares.
 */
-function applyMiddleware(...middlewares) {
+export function applyMiddleware(...middlewares) {
 	return createStore => (...args) => {
 		const store = createStore(...args);
 		let action = () => {
